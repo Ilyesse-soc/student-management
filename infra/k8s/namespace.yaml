@@ -1,0 +1,5 @@
+# Namespace dédié pour l’application Student Management
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: student-management

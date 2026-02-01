@@ -1,0 +1,80 @@
+# Déploiement backend .NET (ASP.NET Core 7)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-dotnet
+  namespace: student-management
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-dotnet
+  template:
+    metadata:
+      labels:
+        app: backend-dotnet
+    spec:
+      containers:
+        - name: backend-dotnet
+          image: registry.gitlab.com/efrei/student-management/backend-dotnet:latest
+          ports:
+            - containerPort: 3002
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "server=mysql.student-management.svc.cluster.local;port=3306;database=StudentManagement_DEV;user=root;password=root"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_URLS
+              value: "http://+:3002"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+# Service ClusterIP pour backend .NET
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-dotnet
+  namespace: student-management
+spec:
+  selector:
+    app: backend-dotnet
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: ClusterIP
+---
+# HPA pour backend .NET
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-dotnet-hpa
+  namespace: student-management
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-dotnet
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60

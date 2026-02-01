@@ -1,0 +1,42 @@
+# Ingress pour exposer le frontend et router les API
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: student-management-ingress
+  namespace: student-management
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/proxy-body-size: "16m"
+spec:
+  rules:
+    - host: student-management.local
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/(.*)"
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+          - pathType: Prefix
+            path: "/api/node(/|$)(.*)"
+            backend:
+              service:
+                name: backend-node
+                port:
+                  number: 3001
+          - pathType: Prefix
+            path: "/api/dotnet(/|$)(.*)"
+            backend:
+              service:
+                name: backend-dotnet
+                port:
+                  number: 3002
+          - pathType: Prefix
+            path: "/api/spring(/|$)(.*)"
+            backend:
+              service:
+                name: backend-springboot
+                port:
+                  number: 3003

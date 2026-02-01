@@ -1,0 +1,80 @@
+# Déploiement backend Node.js (Express + Prisma)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-node
+  namespace: student-management
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-node
+  template:
+    metadata:
+      labels:
+        app: backend-node
+    spec:
+      containers:
+        - name: backend-node
+          image: registry.gitlab.com/efrei/student-management/backend-node:latest
+          ports:
+            - containerPort: 3001
+          env:
+            - name: DATABASE_URL
+              value: "mysql://root:root@mysql.student-management.svc.cluster.local:3306/StudentManagement_DEV"
+            - name: PORT
+              value: "3001"
+            - name: NODE_ENV
+              value: "production"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3001
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+# Service ClusterIP pour backend Node.js
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-node
+  namespace: student-management
+spec:
+  selector:
+    app: backend-node
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP
+---
+# HPA pour backend Node.js
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend-node-hpa
+  namespace: student-management
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend-node
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60

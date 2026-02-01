@@ -1,0 +1,47 @@
+.header {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+.left {
+  font-weight: 700;
+  font-size: 20px;
+  color: #1f2937;
+}
+.project {
+  letter-spacing: 0.5px;
+}
+.nav {
+  display: flex;
+  gap: 24px;
+}
+.nav a {
+  color: #1f2937;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+.nav a:hover {
+  color: #2563eb;
+}
+.active {
+  color: #2563eb;
+  border-bottom: 2px solid #2563eb;
+}

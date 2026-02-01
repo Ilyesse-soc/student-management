@@ -1,0 +1,40 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Étudiants - Node.js",
+    "version": "1.0.0",
+    "description": "Documentation OpenAPI pour le backend Node.js du projet Student Management."
+  },
+  "servers": [
+    { "url": "/api" }
+  ],
+  "paths": {
+    "/students": {
+      "get": {
+        "summary": "Liste tous les étudiants",
+        "responses": { "200": { "description": "OK" } }
+      },
+      "post": {
+        "summary": "Ajoute un étudiant",
+        "responses": { "201": { "description": "Créé" }, "400": { "description": "Erreur de validation" } }
+      }
+    },
+    "/students/{id}": {
+      "get": {
+        "summary": "Détail d’un étudiant",
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": { "200": { "description": "OK" }, "404": { "description": "Non trouvé" } }
+      },
+      "put": {
+        "summary": "Modifie un étudiant",
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": { "200": { "description": "OK" }, "400": { "description": "Erreur de validation" }, "404": { "description": "Non trouvé" } }
+      },
+      "delete": {
+        "summary": "Supprime un étudiant",
+        "parameters": [ { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } } ],
+        "responses": { "204": { "description": "Supprimé" }, "404": { "description": "Non trouvé" } }
+      }
+    }
+  }
+}
