@@ -21,4 +21,5 @@ model Student {
 
   @@index([email])
   @@index([enrollmentDate])
+  @@map("students")
 }
