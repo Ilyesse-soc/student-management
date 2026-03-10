@@ -1,10 +1,22 @@
 # Student Management System 🎓
 
-![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue)
+[![GitLab CI/CD](https://img.shields.io/badge/CI%2FCD-GitLab-orange)](https://gitlab.com/ilyesse-soc1/student-management/-/pipelines)
+[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue)](https://github.com/Ilyesse-soc/student-management/actions)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-active-success)
 
 Système de gestion d'étudiants avec architecture microservices, incluant 3 backends (Node.js, .NET, Spring Boot) et un frontend Next.js.
+
+## 📍 Repositories
+
+Ce projet est synchronisé sur deux plateformes:
+
+- **🦊 GitLab (Principal)**: https://gitlab.com/ilyesse-soc1/student-management
+- **🐙 GitHub (Miroir)**: https://github.com/Ilyesse-soc/student-management
+
+### CI/CD Pipelines
+- GitLab CI/CD: Pipeline avec images Docker officielles
+- GitHub Actions: 4 workflows automatisés (CI/CD, sync, code quality, database checks)
 
 ## 🚀 Démarrage rapide
 
@@ -54,16 +66,54 @@ Système de gestion d'étudiants avec architecture microservices, incluant 3 bac
 
 ## 🔧 CI/CD
 
-Le projet utilise GitHub Actions pour l'intégration et le déploiement continus.
+Le projet utilise deux pipelines CI/CD:
 
-### Workflows disponibles
-- ✅ Tests automatiques (Node.js, .NET, Spring Boot)
-- ✅ Build des images Docker
-- ✅ Vérification de la qualité du code
-- ✅ Validation des migrations de base de données
+### GitLab CI/CD
+Pipeline avec images Docker officielles (node:18-alpine, dotnet/sdk:8.0, maven:3.8-openjdk-17)
+- ✅ Build des 4 composants (frontend + 3 backends)
+- ✅ Tests avec service MySQL intégré
+- ✅ Build et push Docker images
+- ✅ Déploiement manuel
+
+📊 **Pipeline**: https://gitlab.com/ilyesse-soc1/student-management/-/pipelines
+
+### GitHub Actions
+4 workflows automatisés:
+- ✅ CI/CD principal (tests + build + deploy)
 - ✅ Synchronisation automatique des branches
+- ✅ Vérification qualité du code (ESLint, Prettier)
+- ✅ Validation migrations base de données
+
+📊 **Actions**: https://github.com/Ilyesse-soc/student-management/actions
 
 **Voir [.github/README.md](.github/README.md) pour plus de détails**
+
+## 🔄 Synchronisation Git
+
+Le projet est synchronisé sur GitLab et GitHub. Scripts disponibles:
+
+```powershell
+# Synchroniser les deux repos
+.\sync-repos.ps1
+
+# Push vers GitLab uniquement
+.\push-gitlab.ps1
+
+# Configurer token GitLab
+.\setup-gitlab-token.ps1 -Token "VOTRE_TOKEN"
+```
+
+### Configuration manuelle
+```bash
+# Voir les remotes
+git remote -v
+
+# Push vers GitLab
+git push origin main
+
+# Push vers GitHub
+git push github main
+```
 
 ## 📝 Scripts disponibles
 
