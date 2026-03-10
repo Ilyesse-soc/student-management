@@ -1,0 +1,61 @@
+name: Database Migration Check
+
+on:
+  pull_request:
+    paths:
+      - 'backend-node/prisma/**'
+      - 'backend-dotnet/Data/**'
+      - 'backend-springboot/src/main/resources/**'
+      - 'infra/mysql/**'
+
+jobs:
+  check-migrations:
+    name: Vérifier les migrations
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: StudentManagement_DEV
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        working-directory: ./backend-node
+        run: npm ci
+      
+      - name: Check Prisma Schema
+        working-directory: ./backend-node
+        run: |
+          npx prisma validate
+          npx prisma format --check
+      
+      - name: Generate Prisma Client
+        working-directory: ./backend-node
+        run: npx prisma generate
+      
+      - name: Run migrations (dry-run)
+        working-directory: ./backend-node
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: mysql://root:root@localhost:3306/StudentManagement_DEV
+      
+      - name: Check database state
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot -e "USE StudentManagement_DEV; SHOW TABLES;"

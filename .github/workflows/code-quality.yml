@@ -1,0 +1,47 @@
+name: Code Quality Check
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  code-quality:
+    name: Analyse de qualité du code
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Check for large files
+        run: |
+          echo "Vérification des fichiers volumineux..."
+          find . -type f -size +10M | grep -v node_modules | grep -v .git || true
+      
+      - name: Check for secrets
+        run: |
+          echo "Vérification des secrets exposés..."
+          grep -r -i "password\s*=\s*['\"].*['\"]" . --exclude-dir={node_modules,.git,bin,obj,target} || true
+          grep -r -i "api[_-]key\s*=\s*['\"].*['\"]" . --exclude-dir={node_modules,.git,bin,obj,target} || true
+      
+      - name: Check file structure
+        run: |
+          echo "Structure du projet:"
+          tree -L 2 -I 'node_modules|bin|obj|target' || ls -la
+      
+      - name: Count lines of code
+        run: |
+          echo "Statistiques du projet:"
+          echo "Backend Node.js:"
+          find backend-node/src -name "*.ts" -o -name "*.js" | xargs wc -l | tail -1 || true
+          echo "Frontend Next.js:"
+          find frontend/src -name "*.tsx" -o -name "*.ts" -o -name "*.jsx" -o -name "*.js" | xargs wc -l | tail -1 || true

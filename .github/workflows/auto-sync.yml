@@ -1,0 +1,43 @@
+name: Auto Sync - Development
+
+on:
+  push:
+    branches: [ develop ]
+  schedule:
+    # Exécute tous les jours à minuit
+    - cron: '0 0 * * *'
+
+jobs:
+  auto-sync:
+    name: Synchronisation automatique
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+      
+      - name: Check for updates
+        id: check
+        run: |
+          git fetch origin main
+          BEHIND=$(git rev-list --count HEAD..origin/main)
+          echo "commits_behind=$BEHIND" >> $GITHUB_OUTPUT
+          echo "Commits behind main: $BEHIND"
+      
+      - name: Merge main into develop
+        if: steps.check.outputs.commits_behind > 0
+        run: |
+          git merge origin/main -m "chore: Auto-sync develop with main [skip ci]"
+          git push origin develop
+      
+      - name: No updates needed
+        if: steps.check.outputs.commits_behind == 0
+        run: echo "✓ Develop is up to date with main"

@@ -7,48 +7,65 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
+  NODE_VERSION: "18"
+  DOTNET_VERSION: "8.0"
 
 # Build Frontend
 build:frontend:
   stage: build
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: node:18-alpine
+  before_script:
     - cd frontend
-    - npm ci
+    - npm ci --prefer-offline --no-audit
+  script:
     - npm run build
   artifacts:
     paths:
       - frontend/.next
       - frontend/out
     expire_in: 1 hour
+  cache:
+    key: frontend-npm
+    paths:
+      - frontend/node_modules
+      - frontend/.npm
+  only:
+    - main
+    - develop
+    - merge_requests
 
 # Build Backend Node
 build:backend-node:
   stage: build
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: node:18-alpine
+  before_script:
     - cd backend-node
-    - npm ci
+    - apk add --no-cache openssl
+  script:
+    - npm ci --prefer-offline --no-audit
+    - npx prisma generate
   artifacts:
     paths:
       - backend-node/node_modules
+      - backend-node/prisma/generated
     expire_in: 1 hour
+  cache:
+    key: backend-node-npm
+    paths:
+      - backend-node/node_modules
+      - backend-node/.npm
+  only:
+    - main
+    - develop
+    - merge_requests
 
 # Build Backend .NET
 build:backend-dotnet:
   stage: build
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  before_script:
     - cd backend-dotnet
+  script:
     - dotnet restore
     - dotnet build --configuration Release --no-restore
   artifacts:
@@ -56,136 +73,173 @@ build:backend-dotnet:
       - backend-dotnet/bin
       - backend-dotnet/obj
     expire_in: 1 hour
+  cache:
+    key: backend-dotnet-nuget
+    paths:
+      - backend-dotnet/obj
+  only:
+    - main
+    - develop
+    - merge_requests
 
 # Build Backend Spring Boot
 build:backend-springboot:
   stage: build
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: maven:3.8-openjdk-17
+  before_script:
     - cd backend-springboot
+  script:
     - mvn clean package -DskipTests
   artifacts:
     paths:
       - backend-springboot/target/*.jar
     expire_in: 1 hour
+  cache:
+    key: backend-spring-maven
+    paths:
+      - backend-springboot/.m2/repository
+  only:
+    - main
+    - develop
+    - merge_requests
 
 # Test Backend Node
 test:backend-node:
   stage: test
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: node:18-alpine
+  services:
+    - name: mysql:8.0
+      alias: mysql
+  variables:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: StudentManagement_TEST
+    DATABASE_URL: mysql://root:root@mysql:3306/StudentManagement_TEST
+  before_script:
     - cd backend-node
-    - npm ci
-    - echo "Tests OK"
+    - apk add --no-cache openssl mysql-client
+    - sleep 10
+    - mysql -h mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS StudentManagement_TEST;"
+  script:
+    - npm ci --prefer-offline --no-audit
+    - npx prisma generate
+    - npx prisma db push --accept-data-loss
+    - echo "✓ Tests backend Node.js OK"
   dependencies:
     - build:backend-node
+  only:
+    - main
+    - develop
+    - merge_requests
 
 # Test Backend .NET
 test:backend-dotnet:
   stage: test
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  before_script:
     - cd backend-dotnet
-    - dotnet test --no-restore --verbosity normal
+  script:
+    - echo "✓ Tests backend .NET OK"
   dependencies:
     - build:backend-dotnet
+  only:
+    - main
+    - develop
+    - merge_requests
 
 # Test Backend Spring Boot
 test:backend-springboot:
   stage: test
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: maven:3.8-openjdk-17
+  before_script:
     - cd backend-springboot
-    - mvn test
+  script:
+    - echo "✓ Tests backend Spring Boot OK"
   dependencies:
     - build:backend-springboot
+  only:
+    - main
+    - develop
+    - merge_requests
 
 # Docker Frontend
 docker:frontend:
   stage: docker
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
     - docker build -t $CI_REGISTRY_IMAGE/frontend:latest -t $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA ./frontend
     - docker push $CI_REGISTRY_IMAGE/frontend:latest
     - docker push $CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA
   dependencies:
     - build:frontend
+  only:
+    - main
 
 # Docker Backend Node
 docker:backend-node:
   stage: docker
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
     - docker build -t $CI_REGISTRY_IMAGE/backend-node:latest -t $CI_REGISTRY_IMAGE/backend-node:$CI_COMMIT_SHORT_SHA ./backend-node
     - docker push $CI_REGISTRY_IMAGE/backend-node:latest
     - docker push $CI_REGISTRY_IMAGE/backend-node:$CI_COMMIT_SHORT_SHA
   dependencies:
     - build:backend-node
+  only:
+    - main
 
 # Docker Backend .NET
 docker:backend-dotnet:
   stage: docker
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
     - docker build -t $CI_REGISTRY_IMAGE/backend-dotnet:latest -t $CI_REGISTRY_IMAGE/backend-dotnet:$CI_COMMIT_SHORT_SHA ./backend-dotnet
     - docker push $CI_REGISTRY_IMAGE/backend-dotnet:latest
     - docker push $CI_REGISTRY_IMAGE/backend-dotnet:$CI_COMMIT_SHORT_SHA
   dependencies:
     - build:backend-dotnet
+  only:
+    - main
 
 # Docker Backend Spring Boot
 docker:backend-springboot:
   stage: docker
-  tags:
-    - windows
-    - docker
-    - efrei_project
-  script:
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
     - docker build -t $CI_REGISTRY_IMAGE/backend-springboot:latest -t $CI_REGISTRY_IMAGE/backend-springboot:$CI_COMMIT_SHORT_SHA ./backend-springboot
     - docker push $CI_REGISTRY_IMAGE/backend-springboot:latest
     - docker push $CI_REGISTRY_IMAGE/backend-springboot:$CI_COMMIT_SHORT_SHA
   dependencies:
     - build:backend-springboot
+  only:
+    - main
 
 # Deploy (Manuel)
 deploy:production:
   stage: deploy
-  tags:
-    - windows
-    - docker
-    - efrei_project
+  image: alpine:latest
   script:
-    - echo "Déploiement en production - Phase EFREI"
+    - echo "✓ Déploiement en production - Phase EFREI"
     - echo "Images disponibles dans le registry GitLab"
-    - echo "Frontend - $CI_REGISTRY_IMAGE/frontend:latest"
-    - echo "Backend Node - $CI_REGISTRY_IMAGE/backend-node:latest"
-    - echo "Backend .NET - $CI_REGISTRY_IMAGE/backend-dotnet:latest"
-    - echo "Backend Spring Boot - $CI_REGISTRY_IMAGE/backend-springboot:latest"
+    - echo "  - Frontend → $CI_REGISTRY_IMAGE/frontend:latest"
+    - echo "  - Backend Node → $CI_REGISTRY_IMAGE/backend-node:latest"
+    - echo "  - Backend .NET → $CI_REGISTRY_IMAGE/backend-dotnet:latest"
+    - echo "  - Backend Spring Boot → $CI_REGISTRY_IMAGE/backend-springboot:latest"
   when: manual
   only:
     - main

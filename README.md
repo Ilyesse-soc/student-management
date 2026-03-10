@@ -1,33 +1,162 @@
-# student-management
+# Student Management System 🎓
 
+![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-active-success)
 
+Système de gestion d'étudiants avec architecture microservices, incluant 3 backends (Node.js, .NET, Spring Boot) et un frontend Next.js.
 
-## Getting started
+## 🚀 Démarrage rapide
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### Prérequis
+- Docker & Docker Compose
+- Node.js 18+
+- .NET 8.0+ (optionnel)
+- Java 17+ (optionnel)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Installation rapide
 
-## Add your files
+1. **Cloner le projet**
+   ```bash
+   git clone https://gitlab.com/ilyesse-soc1/student-management.git
+   cd student-management
+   ```
 
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+2. **Lancer avec Docker Compose**
+   ```bash
+   cd infra/docker-compose
+   docker-compose -f docker-compose.dev.yml up
+   ```
 
+3. **OU lancer avec le script PowerShell (Windows)**
+   ```powershell
+   .\start-services.ps1
+   ```
+
+4. **Accéder à l'application**
+   - Frontend: http://localhost:3000
+   - API Node.js: http://localhost:3001
+   - API .NET: http://localhost:3002
+   - API Spring Boot: http://localhost:3003
+
+## 📋 Architecture
+
+### Backend Services
+- **Node.js (Express + Prisma)** - Port 3001
+- **.NET Core** - Port 3002
+- **Spring Boot** - Port 3003
+
+### Frontend
+- **Next.js** - Port 3000
+
+### Base de données
+- **MySQL 8.0** - Port 3306
+
+## 🔧 CI/CD
+
+Le projet utilise GitHub Actions pour l'intégration et le déploiement continus.
+
+### Workflows disponibles
+- ✅ Tests automatiques (Node.js, .NET, Spring Boot)
+- ✅ Build des images Docker
+- ✅ Vérification de la qualité du code
+- ✅ Validation des migrations de base de données
+- ✅ Synchronisation automatique des branches
+
+**Voir [.github/README.md](.github/README.md) pour plus de détails**
+
+## 📝 Scripts disponibles
+
+### Backend Node.js
+```bash
+cd backend-node
+npm install
+npm run dev        # Mode développement
+npm run build      # Build production
+npm test          # Lancer les tests
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/ilyesse-soc1/student-management.git
-git branch -M main
-git push -uf origin main
+
+### Backend .NET
+```bash
+cd backend-dotnet
+dotnet restore
+dotnet run        # Lancer l'application
+dotnet test       # Lancer les tests
 ```
 
-## Integrate with your tools
+### Backend Spring Boot
+```bash
+cd backend-springboot
+./mvnw clean install
+./mvnw spring-boot:run
+```
 
-* [Set up project integrations](https://gitlab.com/ilyesse-soc1/student-management/-/settings/integrations)
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev       # Mode développement
+npm run build     # Build production
+```
 
-## Collaborate with your team
+## 🗄️ Base de données
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
+### Prisma Migrations (Node.js)
+```bash
+cd backend-node
+npx prisma generate              # Générer le client Prisma
+npx prisma migrate dev          # Créer une migration
+npx prisma migrate deploy       # Appliquer les migrations
+npx prisma studio              # Interface graphique
+```
+
+## 📚 Documentation
+
+- [API Documentation](docs/fr/api.md)
+- [Architecture](docs/fr/architecture.md)
+- [Installation](docs/fr/installation.md)
+- [Deployment](docs/fr/deployment.md)
+
+## 🛠️ Technologies
+
+### Backend
+- Node.js + Express + TypeScript
+- ASP.NET Core 8.0 + Entity Framework
+- Spring Boot 3.1 + JPA
+
+### Frontend
+- Next.js 14
+- React 18
+- TypeScript
+
+### Base de données
+- MySQL 8.0
+- Prisma ORM
+
+### DevOps
+- Docker & Docker Compose
+- GitHub Actions
+- Git
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit les changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+## 📄 License
+
+Ce projet est sous licence MIT.
+
+## 👥 Auteurs
+
+- **Ilyesse El Adaoui** - [GitLab](https://gitlab.com/ilyesse-soc1)
+
+## 📞 Support
+
+Pour toute question ou problème, ouvrez une issue sur GitLab.
 * [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
 * [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
 * [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)

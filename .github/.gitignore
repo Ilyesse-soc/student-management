@@ -1,0 +1,9 @@
+# Ignorer les fichiers de workflow temporaires
+*.log
+*.swp
+*~
+
+# Ignorer les artifacts de build
+build/
+dist/
+*.tmp
