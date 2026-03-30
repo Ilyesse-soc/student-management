@@ -62,7 +62,8 @@ Ce projet est synchronisé sur deux plateformes:
 - **Next.js** - Port 3000
 
 ### Base de données
-- **MySQL 8.0** - Port 3306
+- **MySQL 8.0** - Port 3309 (hôte) → 3306 (container)
+- **phpMyAdmin** - http://localhost:8080
 
 ## 🔧 CI/CD
 

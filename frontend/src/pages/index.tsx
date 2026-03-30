@@ -135,13 +135,13 @@ export default function Home() {
 
       <style jsx global>{`
         :root {
-          --bg: #0d0f14;
-          --surface: #13161e;
-          --border: rgba(255, 255, 255, 0.07);
+          --bg: #ffffff;
+          --surface: #ffffff;
+          --border: rgba(15, 23, 42, 0.12);
           --accent: #4f7dff;
           --accent2: #7c5cfc;
-          --text: #e8eaf2;
-          --text-muted: #6b7290;
+          --text: #0f172a;
+          --text-muted: #475569;
         }
 
         * {
@@ -167,17 +167,7 @@ export default function Home() {
           content: '';
           position: fixed;
           inset: 0;
-          background:
-            radial-gradient(
-              ellipse 700px 500px at 15% 10%,
-              rgba(79, 125, 255, 0.08) 0%,
-              transparent 70%
-            ),
-            radial-gradient(
-              ellipse 500px 400px at 85% 80%,
-              rgba(124, 92, 252, 0.07) 0%,
-              transparent 70%
-            );
+          background: none;
           pointer-events: none;
           z-index: 0;
         }
@@ -191,7 +181,7 @@ export default function Home() {
           justify-content: space-between;
           padding: 0 48px;
           height: 62px;
-          background: rgba(13, 15, 20, 0.85);
+          background: rgba(255, 255, 255, 0.9);
           backdrop-filter: blur(20px);
           border-bottom: 1px solid var(--border);
         }

@@ -1,10 +1,12 @@
 package com.studentmanagement.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -31,13 +33,21 @@ public class Student {
     @Size(max = 20)
     private String phone;
 
-    private LocalDateTime enrollmentDate;
+    @NotNull
+    private LocalDate enrollmentDate;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        var now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
 
     @PreUpdate
-    public void setUpdatedAt() {
+    public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
@@ -81,11 +91,11 @@ public class Student {
         this.phone = phone;
     }
 
-    public LocalDateTime getEnrollmentDate() {
+    public LocalDate getEnrollmentDate() {
         return enrollmentDate;
     }
 
-    public void setEnrollmentDate(LocalDateTime enrollmentDate) {
+    public void setEnrollmentDate(LocalDate enrollmentDate) {
         this.enrollmentDate = enrollmentDate;
     }
 

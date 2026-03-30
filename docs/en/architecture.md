@@ -30,7 +30,7 @@ Microservices platform: Next.js frontend, 3 backends (Node.js, .NET, Spring Boot
 4. Responses are displayed in the UI
 
 ## Database
-- 3 databases: StudentManagement_DEV, UAT, PRD
+- 3 databases: StudentManagement_Dev, UAT, PRD
 - Table students: id, firstName, lastName, email, phone, enrollmentDate, createdAt, updatedAt
 - Index on email and enrollmentDate
 

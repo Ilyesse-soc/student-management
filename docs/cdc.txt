@@ -1,0 +1,745 @@
+Cahier des charges détaillé du projet - 
+Student Management Micro-services 
+Auteur : Issiaka KONE 
+Date : 26/01/2026 
+Ecole : EFREI 2025-2026 
+ 
+I. Vue d'Ensemble du Projet 
+Vous devez développer et déployer une plateforme de gestion d'étudiants basée sur 
+une architecture microservice moderne. Ce projet couvre les technologies actuelles du 
+DevOps et du développement full-stack. 
+Vous formerez des groupes de 5 étudiants pour ce projet. La note sera la même pour 
+tous. Toute fois si lors de la présentation, je constate la non implication d’un étudiant 
+par rapport aux autres membres de son groupe, sa note pourra être diminués en 
+conséquence ! Vous pourrez choisir qui présente quelle partie du projet mais des 
+questions seront posées aléatoirement à chaque membre de votre. 
+Important   Un projet non fonctionnel est un projet non noté . 
+ 
+II. Objectifs Pédagogiques 
+À la fin de ce laboratoire, vous serez capable de: 
+1.  Architecture Microservices 
+• Concevoir une architecture multi-couches 
+• Séparer les responsabilités 
+• Intégrer plusieurs services 
+2.  Développement Full-Stack 
+• Frontend moderne (NextJS) 
+
+
+• Multiple backends (C# + Java + Node.js) 
+• API REST design 
+3.  Containerization 
+• Docker et images multi-stage 
+• Docker Compose orchestration 
+• Optimization des images 
+4.  Orchestration Kubernetes 
+• Manifests Kubernetes 
+• Déploiement sur Minikube 
+• Auto-scaling et résilience 
+5.  CI/CD Automation 
+• GitLab pipeline 
+• Repos GIT 
+• Runner custom sur votre machine 
+• Setup multi-runner 
+• Test automatisé et déploiement 
+• Multienvironement: DEV, UAT et PRD (Production) 
+6.  DevOps Best Practices 
+• Infrastructure as Code 
+• Health checks et monitoring 
+• Logging et gestion des erreurs 
+ 
+III. Spécification du Projet 
+A. Fonctionnalités Requises 
+ Frontend Web 
+✓ Page liste des étudiants (tableau) 
+✓ Formulaire d'ajout d'étudiant 
+✓ Formulaire d'édition d'étudiant 
+✓ Bouton de suppression 
+✓ Affichage du total d'étudiants 
+✓ Interface responsive 
+
+ Backend API (CRUD) 
+GET    /api/students           → Lister tous les étudiants 
+GET    /api/students/{id}      → Obtenir un étudiant 
+POST   /api/students           → Créer un étudiant 
+PUT    /api/students/{id}      → Modifier un étudiant 
+DELETE /api/students/{id}      → Supprimer un étudiant 
+ Modèle de Données Étudiant 
+{ 
+  "id": 1, 
+  "firstName": "string (required)", 
+  "lastName": "string (required)", 
+  "email": "string (required, unique)", 
+  "phone": "string (required)", 
+  "enrollmentDate": "date (required)", 
+  "createdAt": "timestamp", 
+  "updatedAt": "timestamp" 
+ 
+ Base de Données 
+- MySQL 8.0 
+- Database: StudentManagement_Dev, StudentManagement_UAT et 
+StudentManagement_PRD 
+- Table: students (avec indexation) 
+- Auto-initialization 
+ 
+IV. Architecture à Implémenter 
+B. Architecture Globale 
+a. Architecture logicielle 
+ 
+
+ 
+ 
+Les numéros de port sont donnés à titre indicatif, vous pouvez les adapter en fonction 
+de votre système et bien documenter vos choix. Attention un projet non fonctionnel n’est 
+pas noté. 
+Pour les numéros de port hors PRD, ajouter +10 pour trouver le port correspondant. 
+Exemple : Le port du backend Node JS est 4000 pour l’environnement de PROD, celui 
+de l’UAT sera 4010 et le DEV 4020. Vous pouvez garder un serveur MySQL pour tous 
+les environnements. PostgreSQL est autorisé comme serveur de base de données. 
+b. Architecture de l’infrastructure 
+ 
+ 
+
+
+C. Stack Technologique 
+Couche Technologie Version 
+Frontend Next.js + React 14 + 18 
+Frontend Styling Tailwind CSS 3.x 
+HTTP Client Axios 1.6+ 
+Backend 1 ASP.NET Core 7.0 
+ORM 1 Entity Framework Core 7.0 
+Backend 2 Spring Boot 3.1 
+ORM 2 Spring Data JPA 3.1 
+Backend 3 Node.js (Express) 18+ 
+Database MySQL 8.0 
+Containerization Docker Latest 
+Orchestration Docker Compose 3.8+ 
+K8s Kubernetes/Minikube Latest 
+CI/CD GitLab - 
+ 
+V. Phases d'Implémentation 
+A. Phase 1: Mise en Place (2-3 heures) 
+ 1.1 Installation des Prérequis 
+□ Installer Docker Desktop 
+□ Installer Node.js 18+ 
+□ Installer .NET 7 SDK 
+□ Installer Java 17 JDK 
+□ Installer Maven 3.9+ 
+□ Installer Minikube 
+□ Installer kubectl 
+ 1.2 Configuration du Projet 
+□ Cloner/Créer le dépôt Git 
+□ Créer la structure de dossiers 
+□ Initialiser les repos NPM, Maven, .NET 
+□ Configurer les fichiers de configuration 
+ 1.3 Vérification 
+□ Tous les outils sont opérationnels 
+□ Accès à Internet OK 
+□ Docker Desktop démarre 
+□ Ports disponibles (3000, 5000, 8080, 4000, 3306) 
+ 
+
+B. Phase 2: Frontend (4-6 heures) 
+ 2.1 Création du Projet NextJS 
+□ Initialiser Next.js avec Create Next App 
+□ Configurer Tailwind CSS 
+□ Créer la structure des pages 
+□ Configurer Axios pour les appels API 
+ 2.2 Implémentation du Dashboard 
+□ Page principale (index.jsx) avec: 
+  - Affichage liste étudiants (tableau) 
+  - Navigation par onglets 
+  - Gestion des états (loading, erreurs) 
+ 
+□ Composant StudentList: 
+  - Afficher données dans tableau 
+  - Boutons Edit/Delete 
+  - Total d'étudiants 
+ 
+□ Composant StudentForm: 
+  - Champs: firstName, lastName, email, phone, date 
+  - Validation des champs 
+  - Submit/Cancel buttons 
+  - Mode Create et Edit 
+ 2.3 Intégration API 
+□ Créer service Axios pour appels API 
+□ Implémenter getAllStudents() 
+□ Implémenter getStudent(id) 
+□ Implémenter createStudent(data) 
+□ Implémenter updateStudent(id, data) 
+□ Implémenter deleteStudent(id) 
+□ Gestion des erreurs et affichage messages 
+ 2.4 Styling et UX 
+□ Design responsive (mobile, tablet, desktop) 
+□ Couleurs cohérentes 
+□ Feedback utilisateur (loading, success, error) 
+□ Navigation intuitive 
+ 2.5 Build et Test 
+□ npm run build - sans erreurs 
+□ npm run dev - fonctionne localement 
+□ Tester toutes les pages 
+□ Vérifier responsive design 
+ 
+
+C. Phase 3: Backend C# (4-6 heures) 
+ 3.1 Setup du Projet ASP.NET Core 
+□ Créer projet ASP.NET Core 7 
+□ Configurer Startup (Program.cs) 
+□ Ajouter les packages: 
+  - Entity Framework Core 
+  - MySQL connector 
+  - Swagger 
+ 3.2 Modèle de Données 
+□ Créer classe Student avec propriétés: 
+  - Id, FirstName, LastName 
+  - Email, Phone 
+  - EnrollmentDate 
+  - CreatedAt, UpdatedAt 
+□ Ajouter validations/contraintes 
+ 3.3 Database Context 
+□ Créer ApplicationDbContext 
+□ Configurer DbSet<Student> 
+□ Configurer les colonnes: 
+  - Constraints (required, max length) 
+  - Indexes (email, enrollment_date) 
+  - Timestamps (CreatedAt, UpdatedAt) 
+ 3.4 API Controller 
+□ Créer StudentsController héritant ControllerBase 
+□ Implémenter endpoint GET /api/students 
+  - Retourner liste complète 
+  - Gestion erreurs 
+□ Implémenter endpoint GET /api/students/{id} 
+  - Retourner étudiant 
+  - 404 si non trouvé 
+□ Implémenter endpoint POST /api/students 
+  - Créer nouvel étudiant 
+  - Validation des données 
+  - Retourner 201 Created 
+□ Implémenter endpoint PUT /api/students/{id} 
+  - Modifier étudiant existant 
+  - Validation des données 
+  - Retourner l'objet modifié 
+□ Implémenter endpoint DELETE /api/students/{id} 
+  - Supprimer l'étudiant 
+  - Retourner 204 No Content 
+ 3.5 Configuration et Logging 
+□ Configurer appsettings.json 
+
+□ Connection string MySQL 
+□ CORS pour frontend 
+□ Logging intégré 
+□ Swagger documentation 
+ 3.6 Build et Test 
+□ dotnet build - sans erreurs 
+□ dotnet run - démarre sans erreurs 
+□ Tester endpoints avec curl/Postman 
+□ Vérifier Swagger à http://localhost:5000/swagger 
+ 
+D. Phase 4: Backend Java SpringBoot (4-6 heures) 
+ 4.1 Setup du Projet SpringBoot 
+□ Créer projet Spring Boot 3.1 
+□ Ajouter dépendances Maven: 
+  - Spring Web 
+  - Spring Data JPA 
+  - MySQL Driver 
+  - Lombok 
+ 4.2 Modèle JPA 
+□ Créer classe Student avec @Entity 
+□ Ajouter @Id et @GeneratedValue 
+□ Ajouter colonnes avec @Column 
+□ Ajouter validations (@NotNull, etc) 
+□ Ajouter @PrePersist/@PreUpdate 
+□ Utiliser Lombok (@Data, @NoArgsConstructor, etc) 
+ 4.3 Repository 
+□ Créer StudentRepository extends JpaRepository 
+□ Interface clean (JpaRepository fournit CRUD) 
+ 4.4 Service Layer 
+□ Créer StudentService 
+□ Implémenter getAllStudents() 
+□ Implémenter getStudentById() 
+□ Implémenter createStudent() 
+□ Implémenter updateStudent() 
+□ Implémenter deleteStudent() 
+□ Logging avec @Slf4j 
+ 4.5 REST Controller 
+□ Créer StudentController 
+□ @RequestMapping("/api/students") 
+
+□ GET /api/students 
+□ GET /api/students/{id} 
+□ POST /api/students 
+□ PUT /api/students/{id} 
+□ DELETE /api/students/{id} 
+□ Error handling 
+□ @CrossOrigin pour CORS 
+ 4.6 Configuration 
+□ application.properties: 
+  - spring.datasource.url (MySQL) 
+  - spring.datasource.username 
+  - spring.datasource.password 
+  - spring.jpa.hibernate.ddl-auto 
+  - Logging configuration 
+ 4.7 Build et Test 
+□ mvn clean package - sans erreurs 
+□ mvn spring-boot:run - démarre OK 
+□ Tester endpoints 
+□ Vérifier database creation 
+ 
+E. Phase 3 : Backend Node.js (4–6 heures) 
+ 3.1 Setup du Projet Node.js 
+□ Initialiser le projet 
+• node >= 18 
+• npm init -y 
+□ Installer les dépendances principales 
+• Express (API REST) 
+• ORM (au choix : Prisma, Sequelize ou TypeORM) 
+• MySQL driver 
+• Swagger (OpenAPI) 
+• dotenv 
+• cors 
+• winston / pino (logging) 
+ Exemple stack courante : 
+• express 
+
+• prisma + @prisma/client 
+• mysql2 
+• swagger-ui-express 
+• express-validator 
+□ Structure du projet 
+src/ 
+ ├─ controllers/ 
+ ├─ routes/ 
+ ├─ models/ 
+ ├─ services/ 
+ ├─ middlewares/ 
+ ├─ config/ 
+ ├─ app.js 
+ └─ server.js 
+   3.2 Modèle de Données 
+□ Créer le modèle Student 
+Propriétés: 
+• id (int, PK, auto-increment) 
+• firstName 
+• lastName 
+• email 
+• phone 
+• enrollmentDate 
+• createdAt 
+• updatedAt 
+□ Contraintes & validations 
+• email unique 
+• champs obligatoires (firstName, lastName, email) 
+• longueurs max (ex: 100 chars) 
+
+• format email valide 
+ORM (ex Prisma – schema.prisma) 
+• @id 
+• @unique 
+• @default(now()) 
+• @updatedAt 
+ 3.3 Accès Base de Données 
+□ Configuration MySQL 
+• Connection via .env 
+DATABASE_URL="mysql://user:password@localhost:3306/dbname" 
+□ Initialiser l’ORM 
+• Migration initiale 
+• Génération du client 
+□ Index & performances 
+• Index sur: 
+o email 
+o enrollmentDate 
+□ Gestion automatique : 
+• createdAt 
+• updatedAt 
+ 3.4 API Controllers & Routes 
+□ Créer students.controller.js 
+Endpoints REST 
+GET /api/students 
+□ Retourner la liste complète 
+□ Pagination optionnelle 
+□ Gestion erreurs (500) 
+GET /api/students/:id 
+
+□ Retourner un étudiant 
+□ 404 si non trouvé 
+POST /api/students 
+□ Créer un nouvel étudiant 
+□ Validation des données (middleware) 
+□ Retourner 201 Created 
+□ Objet créé en réponse 
+PUT /api/students/:id 
+□ Modifier étudiant existant 
+□ Validation des données 
+□ 404 si non trouvé 
+□ Retourner l’objet modifié 
+DELETE /api/students/:id 
+□ Supprimer l’étudiant 
+□ 404 si non trouvé 
+□ Retourner 204 No Content 
+□ Séparation claire: 
+• routes/students.routes.js 
+• controllers/students.controller.js 
+• services/students.service.js 
+ 
+ 3.5 Configuration & Logging 
+□ Fichier .env 
+• Port 
+• Database URL 
+• Environnement (NODE_ENV) 
+□ CORS 
+• Autoriser frontend (React / React Native) 
+□ Logging 
+
+• Requêtes HTTP 
+• Erreurs applicatives 
+• Logs DB (optionnel) 
+□ Swagger (OpenAPI) 
+• Documentation auto 
+• Accessible via : 
+http://localhost:3000/api-docs 
+ 3.6 Build & Test 
+□ Lancer le serveur 
+npm run dev 
+□ Vérifications 
+• Démarrage sans erreurs 
+• Connexion MySQL OK 
+• Migrations appliquées 
+□ Tests API 
+• curl / Postman 
+• Vérifier tous les endpoints CRUD 
+□ Swagger 
+• Vérifier la doc interactive 
+• Tester directement depuis l’UI 
+ 
+F. Phase 5: Base de Données (2-3 heures) 
+ 5.1 Schéma MySQL 
+□ Créer DATABASE StudentManagement 
+□ Créer TABLE students avec: 
+  - Colonnes: id, firstName, lastName, email, phone 
+  - enrollmentDate, createdAt, updatedAt 
+  - Contraintes: NOT NULL, UNIQUE email 
+  - Indexes: email, enrollmentDate 
+  - Engine: InnoDB 
+
+ 5.2 Données d'Initialisation 
+□ Créer script init.sql 
+□ Insérer 3-5 étudiants sample 
+□ Vérifier données avec SELECT 
+ 5.3 Intégration ORM 
+□ C# EF: Migrations appliquées automatiquement 
+□ Java JPA: Tables créées automatiquement 
+□ Vérifier que les deux connects OK 
+ 
+G. Phase 6: Docker & Docker Compose (4-6 heures) 
+ 6.1 Dockerfiles 
+□ Frontend Dockerfile: 
+  - Multi-stage build 
+  - Builder stage: node build 
+  - Runtime stage: node runtime 
+  - Port 3000 exposé 
+ 
+□ C# Backend Dockerfile: 
+  - Multi-stage build 
+  - SDK stage: dotnet build 
+  - Runtime stage: dotnet runtime 
+  - Port 5000 exposé 
+ 
+□ Java Backend Dockerfile: 
+  - Multi-stage build 
+  - Maven stage: mvn build 
+  - JRE stage: java runtime 
+  - Port 8080 exposé 
+ 6.2 Docker Compose 
+□ Définir service MySQL: 
+  - Image mysql:8.0 
+  - Environment variables 
+  - Volume pour données 
+  - Health check 
+ 
+□ Définir service frontend: 
+  - Build from frontend/Dockerfile 
+  - Port 3000:3000 
+  - Dépendance: backends 
+ 
+□ Définir service backend-dotnet: 
+  - Build from backend-dotnet/Dockerfile 
+  - Port 5000:5000 
+  - Dépendance: mysql 
+  - Environment: connection string 
+
+ 
+□ Définir service backend-springboot: 
+  - Build from backend-springboot/Dockerfile 
+  - Port 8080:8080 
+  - Dépendance: mysql 
+  - Environment: datasource config 
+ 
+□ Network: bridge network pour tous 
+□ Volumes: mysql_data persistant 
+ 6.3 Testing 
+□ docker-compose build - sans erreurs 
+□ docker-compose up -d 
+□ docker-compose ps - tous Up 
+□ Vérifier http://localhost:3000 
+□ Vérifier http://localhost:5000/api/students 
+□ Vérifier http://localhost:8080/api/students 
+□ docker-compose down 
+ 
+H. Phase 7: Kubernetes & Minikube (6-8 heures) 
+ 7.1 Setup Minikube 
+□ minikube start --memory=4096 --cpus=4 
+□ kubectl config current-context 
+□ kubectl get nodes 
+ 7.2 Images Docker dans Minikube 
+□ eval $(minikube docker-env) 
+□ docker build -t student-management/frontend:latest ./frontend 
+□ docker build -t student-management/backend-dotnet:latest ./backend-dotnet 
+□ docker build -t student-management/backend-springboot:latest ./backend-
+springboot 
+ 7.3 Namespace et ConfigMaps 
+□ Créer namespace: student-management 
+□ Créer ConfigMap pour init.sql 
+ 7.4 MySQL StatefulSet 
+□ Créer Service ClusterIP 
+□ Créer StatefulSet avec: 
+  - 1 replica 
+  - PersistentVolumeClaim (5Gi) 
+  - Init container pour DB 
+  - Liveness/Readiness probes 
+ 7.5 Backend Deployments 
+
+□ Frontend Deployment: 
+  - 2 replicas minimum 
+  - LoadBalancer Service port 3000 
+  - Environment variables pour APIs 
+  - Health checks 
+ 
+□ Backend-DotNet Deployment: 
+  - 2 replicas minimum 
+  - ClusterIP Service port 5000 
+  - Environment: connection string 
+  - HPA: min 2, max 5 replicas 
+  - Health checks 
+ 
+□ Backend-SpringBoot Deployment: 
+  - 2 replicas minimum 
+  - ClusterIP Service port 8080 
+  - Environment: datasource 
+  - HPA: min 2, max 5 replicas 
+  - Health checks 
+ 7.6 Testing Kubernetes 
+□ kubectl apply -f kubernetes/manifest.yaml 
+□ kubectl get pods -n student-management -w 
+□ Attendre que tous les pods soient Ready 
+□ kubectl port-forward svc/frontend 3000:3000 -n student-management 
+□ Tester http://localhost:3000 
+□ kubectl logs -f deployment/frontend -n student-management 
+□ Vérifier scaling automatique 
+□ kubectl delete namespace student-management 
+ 
+I. Phase 8: CI/CD Pipeline (4-6 heures) 
+ 8.1 GitLab Repository 
+□ Créer dépôt GitLab 
+□ Push le code 
+□ Configurer protections main/develop 
+ 8.2 Runners 
+□ Installer GitLab Runner Linux: 
+  - Docker executor 
+  - Tags: linux, docker, shell, efrei_project 
+ 
+□ Installer GitLab Runner Windows (optional): 
+  - Docker executor ou shell 
+  - Tags: windows, docker, shell, efrei_project 
+ 8.3 CI/CD Pipeline Stages 
+□ Build Stage: 
+
+  - Job build:frontend 
+    * Compiler NextJS 
+    * Sauvegarder artifacts 
+  - Job build:dotnet 
+    * Compiler C# 
+    * Sauvegarder artifacts 
+  - Job build:springboot 
+    * Compiler Java (Maven) 
+    * Sauvegarder artifacts 
+ 
+□ Test Stage: 
+  - Job test:frontend 
+    * Linting (eslint) 
+  - Job test:springboot 
+    * Unit tests (mvn test) 
+ 
+□ Push Stage: 
+  - Job push:frontend 
+    * Build Docker image 
+    * Push to registry 
+  - Job push:dotnet 
+    * Build Docker image 
+    * Push to registry 
+  - Job push:springboot 
+    * Build Docker image 
+    * Push to registry 
+ 
+□ Deploy Stage (manual): 
+  - Job deploy:docker-compose 
+    * docker-compose up 
+  - Job deploy:minikube 
+    * kubectl apply 
+ 8.4 Testing Pipeline 
+□ Créer merge request 
+□ Pipeline doit s'exécuter 
+□ Tous les jobs doivent passer 
+□ Vérifier artifacts 
+□ Merges dans main 
+□ Vérifier push stage 
+ 
+J. Phase 9: Documentation et Finition (3-4 heures) 
+ 9.1 Commentaires du code  
+□ Tous les fichiers en ENGLISH 
+□ Comments clairs et concis 
+□ Docstrings pour fonctions publiques 
+□ README pour chaque service 
+ 9.2 Documentation Projet 
+
+□ README.md complet 
+□ Architecture.md 
+□ Installation guide 
+□ API documentation 
+□ Troubleshooting guide 
+ 9.3 Nettoyage Final 
+□ Vérifier tous les fichiers .md sont présents 
+□ Vérifier tous les Dockerfiles 
+□ Vérifier kubernetes/manifest.yaml 
+□ Vérifier .gitlab-ci.yml 
+□ Test final complet 
+ 
+VI. Livrables Attendus 
+A. Code Source 
+• Frontend fonctionnel (NextJS + React + Tailwind) 
+• Backend C# complètement implémenté (ASP.NET Core 7) et/ou 
+• Backend Java complètement implémenté (Spring Boot 3) et/ou 
+• Backend Node JS complètement implémenté (NodeJS v25) 
+• Database MySQL avec schéma complet 
+• Scripts d'initialisation 
+B. Configuration DevOps 
+• Dockerfiles multi-stage optimisés 
+• docker-compose.yml complet et fonctionnel pour les tests locaux (environnement 
+de DEV) 
+• kubernetes/manifest.yaml pour Minikube 
+• .gitlab-ci.yml pipeline complète 
+C. Documentation 
+• README en français et anglais 
+• Guide d'installation 
+• Architecture diagram 
+• API documentation 
+• Deployment guides 
+D. Tests 
+• Tous les endpoints CRUD fonctionnent 
+• Docker Compose démarre sans erreurs 
+• Kubernetes déploie correctement 
+
+• Pipeline CI/CD exécute complètement 
+• Tous les commentaires sont en anglais 
+ 
+VII. Barème d'Évaluation 
+Critère Points Détails 
+Frontend 15 Interface CRUD complète + Responsive 
+Backend C# 15 API complète + EF Core + Configuration 
+Backend Java 15 API complète + JPA + Service layer 
+Database 10 Schéma + Indexation + Seed data 
+Docker 15 Dockerfiles + Docker Compose 
+Kubernetes 15 Manifests + Deployment + Scaling 
+CI/CD 10 Pipeline complète + Multi-runner 
+Documentation 5 README + Comments + Guides 
+Code Quality 5 Nommage + Structure + Error handling 
+Tests & Demo 5 Fonctionnement complet + Démo 
+TOTAL 100 
+ 
+ 
+VIII. Critères de Succès 
+A. Fonctionnalité 
+•  CRUD complet fonctionne (tous les 4 opérations) 
+•  Interface web affiche les données 
+•  Les deux backends répondent aux requêtes 
+•  Database persistant les données 
+•  Aucune erreur lors de l'utilisation 
+B. DevOps 
+•  Docker Compose démarre en < 2 minutes 
+•  Tous les services health checks passent 
+•  Kubernetes déploie sans erreurs 
+•  HPA scale automatiquement 
+•  Pipeline CI/CD fonctionne 
+C. Code 
+•  Code bien documenté 
+• Tous les fichiers.md en français dans docs/fr 
+•  Tous les fichiers .md traduits en anglais dans docs/en-us 
+
+•  Tous les commentaires du code en français ou anglais 
+•  Code structuré et lisible 
+•  Error handling complet 
+ 
+IX. Ressources Recommandées 
+A. Documentation Officielle 
+• NextJS: https://nextjs.org/docs 
+• ASP.NET Core: https://docs.microsoft.com/dotnet/ 
+• Spring Boot: https://spring.io/guides/ 
+• Node JS: https://nodejs.org/docs/latest/api 
+• Docker: https://docs.docker.com/ 
+• Kubernetes: https://kubernetes.io/docs/ 
+B. Tutoriels 
+• React Fundamentals: https://react.dev/ 
+• C# Basics: https://docs.microsoft.com/en-us/dotnet/csharp/ 
+• Java OOP: https://docs.oracle.com/javase/tutorial/ 
+C. Outils 
+• Postman: API testing 
+• Docker Desktop: Container runtime 
+• VS Code: Code editor 
+• Git: Version control 
+ 
+X. Pièges Courants à Éviter 
+1. Ne pas valider les entrées → Implémenter validation frontend + backend 
+2. Images Docker trop grandes → Utiliser multi-stage builds 
+3. Hardcoder les URLs → Utiliser environment variables 
+4. Pas de error handling → Ajouter try-catch et logging 
+5. CORS non configuré → Configurer CORS pour frontend 
+6. Database pas persistante → Utiliser volumes Docker 
+7. Pas de health checks → Ajouter liveness/readiness probes 
+8. Comments non en anglais → Tous les commentaires EN ENGLISH! 
+ 
+
+XI. Support et Questions 
+A. Avant de Demander Aide: 
+1. Lire la documentation du projet 
+2. Consulter les ressources recommandées 
+3. Vérifier les logs: docker-compose logs -f 
+4. Vérifier la connectivité: curl http://localhost:PORT 
+B. Comment Demander Aide: 
+1. Décrire le problème clairement 
+2. Montrer les logs 
+3. Donner les étapes pour reproduire 
+4. Montrer le code problématique 
+ 
+XII. Concepts Clés à Maîtriser 
+• Microservices vs Monolith 
+• API REST principles 
+• ORM (Entity Framework + JPA) 
+• Docker images et containers 
+• Docker Compose orchestration 
+• Kubernetes concepts 
+• CI/CD pipelines 
+• Infrastructure as Code 
+ 
+XIII. Timeline Recommandée 
+• Semaine 1: Phases 1-3 (Setup + Frontend + C# Backend) 
+• Semaine 2: Phases 4-5 (Java Backend + Database) 
+• Semaine 3: Phases 6-7 (Docker + Kubernetes) 
+• Semaine 4: Phases 8-9 (CI/CD + Documentation + Finition) 
+Total: ~4 semaines pour le projet complet 
+ 
+XIV. Conclusion 
+
+Ce projet vous permettra de: 
+• Comprendre l'architecture moderne 
+•  Maîtriser les technologies DevOps 
+•  Implémenter une solution production-ready 
+•  Acquérir des compétences professionnelles 
+Bonne chance avec votre projet ! 

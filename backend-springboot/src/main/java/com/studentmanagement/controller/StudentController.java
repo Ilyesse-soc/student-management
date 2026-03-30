@@ -1,4 +1,4 @@
-package main.java.com.studentmanagement.controller;
+package com.studentmanagement.controller;
 
 import java.util.List;
 
@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import com.studentmanagement.model.Student;
 
 import jakarta.validation.Valid;
-import main.java.com.studentmanagement.service.StudentService;
+import com.studentmanagement.service.StudentService;
 
 @RestController
 @RequestMapping("/api/students")
+@CrossOrigin(origins = "http://localhost:3000")
 public class StudentController {
     @Autowired
     private StudentService studentService;
@@ -30,8 +31,8 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student createStudent(@Valid @RequestBody Student student) {
-        return studentService.createStudent(student);
+    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
+        return ResponseEntity.status(201).body(studentService.createStudent(student));
     }
 
     @PutMapping("/{id}")

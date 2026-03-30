@@ -3,6 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 // Ajout du DbContext EF Core avec MySQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(
@@ -22,7 +30,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapGet("/health", () => Results.Ok(new { status = "OK" }));
 app.Run();

@@ -1,10 +1,10 @@
 -- Création des bases de données
-CREATE DATABASE IF NOT EXISTS StudentManagement_DEV CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS StudentManagement_Dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS StudentManagement_UAT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS StudentManagement_PRD CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- Utilisation de la base DEV pour l'initialisation
-USE StudentManagement_DEV;
+USE StudentManagement_Dev;
 
 -- Création de la table students
 CREATE TABLE IF NOT EXISTS students (
@@ -31,9 +31,9 @@ VALUES
 
 -- Réplication pour UAT et PRD
 USE StudentManagement_UAT;
-CREATE TABLE IF NOT EXISTS students LIKE StudentManagement_DEV.students;
-INSERT INTO students SELECT * FROM StudentManagement_DEV.students;
+CREATE TABLE IF NOT EXISTS students LIKE StudentManagement_Dev.students;
+INSERT INTO students SELECT * FROM StudentManagement_Dev.students;
 
 USE StudentManagement_PRD;
-CREATE TABLE IF NOT EXISTS students LIKE StudentManagement_DEV.students;
-INSERT INTO students SELECT * FROM StudentManagement_DEV.students;
+CREATE TABLE IF NOT EXISTS students LIKE StudentManagement_Dev.students;
+INSERT INTO students SELECT * FROM StudentManagement_Dev.students;

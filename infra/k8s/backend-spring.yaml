@@ -21,7 +21,7 @@ spec:
             - containerPort: 3003
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://mysql.student-management.svc.cluster.local:3306/StudentManagement_DEV?useSSL=false&serverTimezone=UTC"
+              value: "jdbc:mysql://mysql.student-management.svc.cluster.local:3306/StudentManagement_Dev?useSSL=false&serverTimezone=UTC"
             - name: SPRING_DATASOURCE_USERNAME
               value: "root"
             - name: SPRING_DATASOURCE_PASSWORD

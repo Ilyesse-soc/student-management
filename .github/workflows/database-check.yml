@@ -18,7 +18,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: StudentManagement_DEV
+          MYSQL_DATABASE: StudentManagement_Dev
         ports:
           - 3306:3306
         options: >-
@@ -54,8 +54,8 @@ jobs:
         working-directory: ./backend-node
         run: npx prisma migrate deploy
         env:
-          DATABASE_URL: mysql://root:root@localhost:3306/StudentManagement_DEV
+          DATABASE_URL: mysql://root:root@localhost:3306/StudentManagement_Dev
       
       - name: Check database state
         run: |
-          mysql -h 127.0.0.1 -uroot -proot -e "USE StudentManagement_DEV; SHOW TABLES;"
+          mysql -h 127.0.0.1 -uroot -proot -e "USE StudentManagement_Dev; SHOW TABLES;"

@@ -26,11 +26,11 @@ Plateforme microservices : frontend Next.js, 3 backends (Node.js, .NET, Spring
 ## Flux principal
 1. L’utilisateur interagit avec le frontend (port 3000)
 2. Le frontend appelle l’API REST du backend choisi (/api/students)
-3. Les backends accèdent à la base MySQL (port 3306)
+3. Les backends accèdent à la base MySQL (port 3306 en interne, 3309 exposé sur l’hôte en dev)
 4. Les réponses sont affichées dans l’UI
 
 ## Base de données
-- 3 bases : StudentManagement_DEV, UAT, PRD
+- 3 bases : StudentManagement_Dev, UAT, PRD
 - Table students : id, firstName, lastName, email, phone, enrollmentDate, createdAt, updatedAt
 - Index sur email et enrollmentDate
 

@@ -1,47 +1,54 @@
-# Script de démarrage pour Student Management
-# Lance tous les services dans des fenêtres séparées
+# Script de demarrage pour Student Management
+# Demarre la stack via Docker Compose (portable, sans chemins codes en dur)
+# Note: le service backend-dotnet est dans un profile "dotnet" car l'acces a mcr.microsoft.com
+# peut etre bloque sur certains reseaux; utilise -IncludeDotnet pour l'activer.
 
-Write-Host "=== LANCEMENT DE STUDENT MANAGEMENT ===" -ForegroundColor Blue
-Write-Host "`n1. Démarrage de MySQL (Docker)..." -ForegroundColor Cyan
-Set-Location -Path "d:\epreuvefinal-devopscicd\student-management\infra\docker-compose"
-docker-compose -f docker-compose.dev.yml up mysql -d
+param(
+    [switch]$IncludeDotnet
+)
 
-Write-Host "`n2. Attente du démarrage de MySQL..." -ForegroundColor Yellow
-Start-Sleep -Seconds 10
+$ErrorActionPreference = 'Stop'
 
-Write-Host "`n3. Lancement du Backend Node.js (Port 3001)..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location 'd:\epreuvefinal-devopscicd\student-management\backend-node'; Write-Host '=== Backend Node.js - Port 3001 ===' -ForegroundColor Green; npm run dev"
+$repoRoot = $PSScriptRoot
+$composePath = Join-Path $repoRoot 'infra\docker-compose\docker-compose.dev.yml'
 
-Write-Host "`n4. Lancement du Frontend Next.js (Port 3000)..." -ForegroundColor Magenta
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location 'd:\epreuvefinal-devopscicd\student-management\frontend'; Write-Host '=== Frontend Next.js - Port 3000 ===' -ForegroundColor Magenta; npm run dev"
+Write-Host "=== LANCEMENT DE STUDENT MANAGEMENT (Docker Compose) ===" -ForegroundColor Blue
+Write-Host "Compose: $composePath" -ForegroundColor DarkGray
 
-Write-Host "`n✓ Services lancés dans des fenêtres séparées!" -ForegroundColor Green
-Write-Host "`nAttente de 15 secondes pour le démarrage complet..."
-Start-Sleep -Seconds 15
-
-Write-Host "`n=== STATUT DES SERVICES ===" -ForegroundColor Blue
-Write-Host "`nMySQL:" -NoNewline
-docker ps --filter "name=mysql" --format " ✓ {{.Status}}"
-
-Write-Host "Backend Node (3001):" -NoNewline
-try {
-    Invoke-WebRequest -Uri 'http://localhost:3001/api/students' -TimeoutSec 2 -UseBasicParsing | Out-Null
-    Write-Host " ✓ ACTIF" -ForegroundColor Green
-} catch {
-    Write-Host " ✗ Pas encore prêt" -ForegroundColor Yellow
+if (-not (Test-Path $composePath)) {
+    throw "Fichier docker-compose introuvable: $composePath"
 }
 
-Write-Host "Frontend (3000):" -NoNewline
-try {
-    Invoke-WebRequest -Uri 'http://localhost:3000' -TimeoutSec 2 -UseBasicParsing | Out-Null
-    Write-Host " ✓ ACTIF" -ForegroundColor Green
-} catch {
-    Write-Host " ✗ Pas encore prêt" -ForegroundColor Yellow
+Write-Host "`n1) Build + demarrage des services..." -ForegroundColor Cyan
+if ($IncludeDotnet) {
+    docker compose -f $composePath --profile dotnet up -d --build
+} else {
+    docker compose -f $composePath up -d --build
 }
 
-Write-Host "`n=== URLS D'ACCÈS ===" -ForegroundColor Cyan
-Write-Host "Frontend:     http://localhost:3000"
-Write-Host "API Node.js:  http://localhost:3001/api/students"
-Write-Host "Swagger Node: http://localhost:3001/api-docs"
+Write-Host "`n2) Verification rapide des endpoints..." -ForegroundColor Yellow
+$checks = @(
+    @{ Name = 'Frontend (3000)'; Url = 'http://localhost:3000' },
+    @{ Name = 'API Node (3001)'; Url = 'http://localhost:3001/api/students' },
+    @{ Name = 'API .NET (3002)'; Url = 'http://localhost:3002/api/students' },
+    @{ Name = 'API Spring (3003)'; Url = 'http://localhost:3003/api/students' },
+    @{ Name = 'phpMyAdmin (8080)'; Url = 'http://localhost:8080' }
+)
 
-Write-Host "`nNote: Les backends .NET et Spring Boot nécessitent que dotnet et Java soient installés" -ForegroundColor Yellow
+foreach ($c in $checks) {
+    Write-Host ("{0}:" -f $c.Name) -NoNewline
+    try {
+        Invoke-WebRequest -Uri $c.Url -TimeoutSec 3 -UseBasicParsing | Out-Null
+        Write-Host " OK" -ForegroundColor Green
+    } catch {
+        Write-Host " NOT_READY" -ForegroundColor Yellow
+    }
+}
+
+Write-Host "`n=== URLS D ACCES ===" -ForegroundColor Cyan
+Write-Host "Frontend:      http://localhost:3000"
+Write-Host "API Node.js:   http://localhost:3001/api/students"
+Write-Host "API .NET:      http://localhost:3002/api/students"
+Write-Host "API Spring:    http://localhost:3003/api/students"
+Write-Host "phpMyAdmin:    http://localhost:8080 (serveur: mysql / user: root / mdp: root)"
+Write-Host "MySQL (host):  127.0.0.1:3309"

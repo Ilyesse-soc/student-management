@@ -1,4 +1,4 @@
-package test.java.com.studentmanagement;
+package com.studentmanagement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +26,7 @@ class BackendSpringbootApplicationTests {
         student.setLastName("Doe");
         student.setEmail("john.doe@example.com");
         student.setPhone("0600000000");
-        student.setEnrollmentDate(java.time.LocalDateTime.now());
+        student.setEnrollmentDate(java.time.LocalDate.now());
         Student saved = studentRepository.save(student);
         assertThat(saved.getId()).isNotNull();
     }

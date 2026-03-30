@@ -41,6 +41,6 @@
 - See `.env.example` files in each service folder.
 
 ## Common issues
-- Make sure all ports are free (3000, 3001, 3002, 3003, 3306)
+- Make sure all ports are free (3000, 3001, 3002, 3003, 3309)
 - If a service fails to start, check Docker/Kubernetes logs
 - For any question, see the documentation in `docs/en-us/` or ask the team

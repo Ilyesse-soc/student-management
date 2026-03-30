@@ -41,6 +41,6 @@
 - Voir les fichiers `.env.example` dans chaque dossier de service.
 
 ## Problèmes courants
-- Vérifier que tous les ports sont libres (3000, 3001, 3002, 3003, 3306)
+- Vérifier que tous les ports sont libres (3000, 3001, 3002, 3003, 3309)
 - Si un service ne démarre pas, consulter les logs Docker/Kubernetes
 - Pour toute question, voir la documentation dans `docs/fr/` ou demander à l’équipe

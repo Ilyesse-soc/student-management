@@ -21,7 +21,7 @@ spec:
             - containerPort: 3002
           env:
             - name: ConnectionStrings__DefaultConnection
-              value: "server=mysql.student-management.svc.cluster.local;port=3306;database=StudentManagement_DEV;user=root;password=root"
+              value: "server=mysql.student-management.svc.cluster.local;port=3306;database=StudentManagement_Dev;user=root;password=root"
             - name: ASPNETCORE_ENVIRONMENT
               value: "Production"
             - name: ASPNETCORE_URLS

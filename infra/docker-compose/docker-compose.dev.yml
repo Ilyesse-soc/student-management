@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   mysql:
     image: mysql:8.0
@@ -8,7 +6,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3306:3306"
+      - "3309:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ../mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -18,6 +16,22 @@ services:
       timeout: 5s
       retries: 5
 
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+    ports:
+      - "8080:80"
+
   backend-node:
     build: ../../backend-node
     container_name: backend-node
@@ -25,7 +39,7 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      DATABASE_URL: "mysql://root:root@mysql:3306/StudentManagement_DEV"
+      DATABASE_URL: "mysql://root:root@mysql:3306/StudentManagement_Dev"
     ports:
       - "3001:3001"
     healthcheck:
@@ -37,11 +51,12 @@ services:
   backend-dotnet:
     build: ../../backend-dotnet
     container_name: backend-dotnet
+    profiles: ["dotnet"]
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: "server=mysql;port=3306;database=StudentManagement_DEV;user=root;password=root"
+      ConnectionStrings__DefaultConnection: "server=mysql;port=3306;database=StudentManagement_Dev;user=root;password=root"
     ports:
       - "3002:3002"
     healthcheck:
@@ -57,7 +72,7 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/StudentManagement_DEV?useSSL=false&serverTimezone=UTC"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/StudentManagement_Dev?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
     ports:
@@ -73,9 +88,9 @@ services:
     container_name: frontend
     depends_on:
       - backend-node
-      - backend-dotnet
       - backend-springboot
     environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:3001"
       NEXT_PUBLIC_API_NODE: "http://localhost:3001/api/students"
       NEXT_PUBLIC_API_DOTNET: "http://localhost:3002/api/students"
       NEXT_PUBLIC_API_SPRING: "http://localhost:3003/api/students"
